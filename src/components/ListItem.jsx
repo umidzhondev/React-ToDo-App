@@ -16,4 +16,4 @@ const ListItem = ({number,stack,language,item,deleteItem,editItem}) => {
   )
 }
 
-export default ListItem
+export default ListItem;

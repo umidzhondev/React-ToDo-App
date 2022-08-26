@@ -11,7 +11,7 @@ const initialState = {
 function App() {
   const [items, setItems] = useState([]);
   const [item, setItem] = useState(initialState);
-  const [showBtnEditContent,setShowBtnEditContent] = useState(false)
+  const [showBtnEditContent, setShowBtnEditContent] = useState(false);
 
   const changeStack = (e) => {
     setItem({ ...item, stack: e.target.value });
@@ -21,9 +21,8 @@ function App() {
     setItem({ ...item, language: e.target.value });
   };
 
-  const addItem = (e) => {
-    e.preventDefault();
-    setShowBtnEditContent(false)
+  const addItem = () => {
+    setShowBtnEditContent(false);
     setItems([...items, { ...item, id: new Date().getMilliseconds() }]);
     setItem({ stack: "", language: "" });
   };
@@ -33,15 +32,36 @@ function App() {
     setItems([...newItems]);
   };
 
-  const editItem = (item) => {
-    setItem({stack:item.stack,language:item.language})
-    setShowBtnEditContent(true)
-  }
+  const editItem = (obj) => {
+    setShowBtnEditContent(true);
+    setItem(obj);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!showBtnEditContent) {
+      addItem();
+    } else {
+      items.map((user) => {
+        if (user.id === item.id) {
+          user.stack = item.stack;
+          user.language = item.language;
+          return user;
+        }
+        return user;
+      });
+      setShowBtnEditContent(false);
+      setItem({ stack: "", language: "" });
+    }
+    e.target.reset();
+  };
 
   return (
     <div className="app mx-auto mx-auto mt-5 px-5 py-5 border border-2 border-primary rounded-3">
-      <form className="form" >
-        <h2 className="fs-2 text-center mb-5">ToDo App </h2>
+      <form className="form" onSubmit={handleSubmit}>
+        <h2 className="fs-2 text-center mb-5">
+          ToDo App - {showBtnEditContent ? "Edit" : "Add"}{" "}
+        </h2>
         <div className="mb-3">
           <label className="form-label mb-3" htmlFor="stack">
             Enter Stack:
@@ -68,14 +88,18 @@ function App() {
             value={item.language}
           />
         </div>
-        <button onClick={showBtnEditContent?editItem:addItem} type="submit" className="btn btn-primary  w-100">
-          {showBtnEditContent?"Edit":"Add"}
+        <button className="btn btn-primary w-100">
+          {showBtnEditContent ? "Edit" : "Add"}
         </button>
       </form>
       <hr className="my-5" />
-      <List items={items} item={item} deleteItem={deleteItem} editItem={editItem} />
+      <List
+        items={items}
+        item={item}
+        deleteItem={deleteItem}
+        editItem={editItem}
+      />
     </div>
-  
   );
 }
 
